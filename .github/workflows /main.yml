@@ -74,4 +74,4 @@ jobs:
         continue-on-error: true
         uses: zaproxy/action-baseline@v0.9.0
         with:
-          target: ""
+          target: ${{secrets.URL}}
