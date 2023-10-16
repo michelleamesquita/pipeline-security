@@ -91,8 +91,6 @@ jobs:
         uses: zaproxy/action-baseline@v0.9.0
         with:
           target: ${{secrets.URL}}
-          github-report: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           
 
   nuclei-scan:
@@ -105,6 +103,8 @@ jobs:
           uses: projectdiscovery/nuclei-action@main
           with:
             target: ${{secrets.URL}}
+            github-report: true
+            github-token: ${{ secrets.GITHUB_TOKEN }}
   
         - name: GitHub Workflow artifacts
           uses: actions/upload-artifact@v2
