@@ -59,7 +59,7 @@ jobs:
       - name: Horusec
         uses: fike/horusec-action@v0.2.2
         with:
-           arguments: "-p ./ -e=false -o=sarif -O=./horusec_report.sarif"
+           arguments: "-p=./app -e=false -o=sarif -O=./horusec_report.sarif"
 
       
         # shell: bash
