@@ -57,7 +57,7 @@ jobs:
         run: |
           # curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
           mkdir reports
-          docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd) -o='sarif' -O='reports/horusec_report.sarif' 
+          docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd) 
           # horusec start -p="./" -o='sarif' -O='reports/horusec_report.sarif' -e="true"  
       - name: Archive horusec report
         uses: actions/upload-artifact@v3
