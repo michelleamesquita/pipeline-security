@@ -54,23 +54,23 @@ jobs:
     steps:
 
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with: 
           fetch-depth: 0
         
       - name: Horusec
-        uses: fike/horusec-action@v0.2.2
-        with:
-           arguments: -p=./ -e=false -o=sarif -O=./horusec_report.sarif
+        # uses: fike/horusec-action@v0.2.2
+        # with:
+        #    arguments: -p=./ -e=false -o=sarif -O=./horusec_report.sarif
 
       
-        # shell: bash
-        # run: |
-        #   # curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
-        #   mkdir reports
+        shell: bash
+        run: |
+          # curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
+          mkdir reports
         
           #docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd) -o='sarif' -O="$(pwd)/reports/horusec_report.sarif"
-          # horusec start -p="./" -o='sarif' -O='reports/horusec_report.sarif' -e="true"  
+          horusec start -p="./" -o='sarif' -O='reports/horusec_report.sarif' -e="true"  
       - name: Archive horusec report
         uses: actions/upload-artifact@v3
         with:
