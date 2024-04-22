@@ -57,7 +57,7 @@ jobs:
         run: |
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
           mkdir reports
-          horusec start -p="./" -G -D -o='sarif' -O='reports/horusec_report.sarif'
+          horusec start -p="./" -o='sarif' -O='reports/horusec_report.sarif' -e="true"  
       - name: Archive horusec report
         uses: actions/upload-artifact@v3
         with:
