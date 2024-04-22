@@ -47,6 +47,23 @@ jobs:
   #     env:
   #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  horusec:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Horusec
+        shell: bash
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
+          mkdir reports
+          horusec start -p="./" -G -o='sarif' -O='reports/horusec_report.sarif'
+      - name: Archive horusec report
+        uses: actions/upload-artifact@v3
+        with:
+          name: horusec_report
+          path: reports/horusec_report.sarif
+          
   
   bandit:
     runs-on: ubuntu-latest
