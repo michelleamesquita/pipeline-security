@@ -67,13 +67,14 @@ jobs:
         #    arguments: -p=./ -e=false -o=sarif -O=./horusec_report.sarif
         shell: bash
         run: |
+          sudo docker --version
+          
           curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
           sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
           sudo apt-get update
           sudo apt-get install docker-ce -y
           sudo docker --version
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-          reset
           
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
           mkdir reports
