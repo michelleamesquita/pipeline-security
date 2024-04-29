@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: horusec_report
-          path: reports/horusec_report.sarif
+          path: ./horusec_report.sarif
           
   
   bandit:
