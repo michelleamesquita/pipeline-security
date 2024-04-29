@@ -73,6 +73,7 @@ jobs:
           sudo apt-get install docker-ce -y
           sudo docker --version
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          reset
           
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
           mkdir reports
