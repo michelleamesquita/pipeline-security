@@ -67,7 +67,7 @@ jobs:
         #    arguments: -p=./ -e=false -o=sarif -O=./horusec_report.sarif
         shell: bash
         run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          #docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
           mkdir reports
           horusec start -p="./" -G -o='sarif' -O='reports/horusec_report.sarif'
