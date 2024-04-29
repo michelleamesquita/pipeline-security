@@ -59,6 +59,9 @@ jobs:
           fetch-depth: 0
         
       - name: Horusec
+        env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
         # uses: fike/horusec-action@v0.2.2
         # with:
         #    arguments: -p=./ -e=false -o=sarif -O=./horusec_report.sarif
