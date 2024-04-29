@@ -67,18 +67,20 @@ jobs:
         #    arguments: -p=./ -e=false -o=sarif -O=./horusec_report.sarif
         shell: bash
         run: |
-          sudo docker --version
+          # sudo docker --version
           
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
-          sudo apt-get update
-          sudo apt-get install docker-ce -y
-          sudo docker --version
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          # sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
+          # sudo apt-get update
+          # sudo apt-get install docker-ce -y
+          # sudo docker --version
+          # docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
           
-          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
-          mkdir reports
-          horusec start -p="./" -o='sarif' -O='reports/horusec_report.sarif'
+          # curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
+          # mkdir reports
+          # horusec start -p="./" -o='sarif' -O='reports/horusec_report.sarif'
+
+          docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd) -o='sarif' -O=/src/horusec/horusec_report.sarif
 
           #docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd) > horusec_report.sarif
       
