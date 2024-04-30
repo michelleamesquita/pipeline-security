@@ -80,7 +80,7 @@ jobs:
           sudo apt update
           sudo apt install docker-ce
           sudo apt-cache madison docker-ce
-          sudo apt-get install -y docker-ce=5:20.10.13~3-0~ubuntu-focal -y --allow-downgrades
+          sudo apt-get install -y docker-ce=5:20.10.13~3-0~ubuntu-jammy -y --allow-downgrades
           sudo docker --version
           # docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
           
