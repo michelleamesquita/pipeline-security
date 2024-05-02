@@ -98,6 +98,7 @@ jobs:
           # mkdir reports
           # horusec start -p="./" -o='sarif' -O='reports/horusec_report.sarif'
 
+          mkdir reports
           docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG horusec start -p /src/horusec -P $(pwd) -o='sarif' -O=/src/horusec/reports/horusec_report.sarif
       
       - name: Archive horusec report
