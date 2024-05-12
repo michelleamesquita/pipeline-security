@@ -11,18 +11,29 @@ on:
 jobs:
 
   semgrep:
-    runs-on: ubuntu-20.04
-    if: (github.actor != 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    container: 
+        image: returntocorp/semgrep-agent:v1
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: returntocorp/semgrep-action@v1
-        with:
-          config: >- # more at semgrep.dev/explore
-            p/security-audit
-            p/secrets
-            p/django
-            p/owasp-top-ten
+      - name: Run Commands
+        run: semgrep-agent --config "p/owasp-top-ten" --gitlab-json > semgrep_report.json
+         
         continue-on-error: true
+
+
+      # - uses: returntocorp/semgrep-action@v1
+      #   with:
+      #     config: >- # more at semgrep.dev/explore
+      #       p/security-audit
+      #       p/secrets
+      #       p/django
+      #       p/owasp-top-ten
+      #   continue-on-error: true
+
+      - name: Archive semgrep report
+        uses: actions/upload-artifact@v3
+        with:
+          name: semgrep_report
+          path: ./semgrep_report.json
           
   
