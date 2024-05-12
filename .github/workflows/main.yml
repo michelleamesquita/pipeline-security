@@ -10,162 +10,19 @@ on:
 
 jobs:
 
-  depcheck:
-    runs-on: ubuntu-latest
-
+  semgrep:
+    runs-on: ubuntu-20.04
+    if: (github.actor != 'dependabot[bot]')
     steps:
-
-      - name: Depcheck
-        uses: dependency-check/Dependency-Check_Action@main
-        id: Depcheck
-        with:
-          project: 'test'
-          path: '.'
-          format: 'HTML'
-          out: 'reports' # this is the default, no need to specify unless you wish to override it
-          args: >
-            --failOnCVSS 7
-            --enableRetired
-      - name: Upload Test results
-        uses: actions/upload-artifact@master
-        with:
-           name: Depcheck report
-           path: ${{github.workspace}}/reports
-
-
-  sonarcloud:
-    runs-on: ubuntu-latest
-    needs: depcheck
-    
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: SonarCloud
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  horusec:
-    runs-on: ubuntu-latest
-
-    steps:
-
-      # - name: Checkout repository
-      #   uses: actions/checkout@v3
-      #   with: 
-      #     fetch-depth: 0
       - uses: actions/checkout@v2
-      - name: Horusec
-        env:
-          DOCKER_USER: ${{secrets.DOCKER_USER}}
-          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-        # uses: fike/horusec-action@v0.2.2
-        # with:
-        #    arguments: -p=./ -e=false -o=sarif -O=./horusec_report.sarif
-        # shell: bash
-        run: |
 
-          sudo apt install apt-transport-https ca-certificates curl software-properties-common
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu `lsb_release -cs` test"
-          sudo apt update
-          sudo apt install docker-ce
-          sudo apt-cache madison docker-ce
-          sudo apt-get install -y docker-ce=5:20.10.13~3-0~ubuntu-jammy -y --allow-downgrades
-          sudo docker --version
-          # docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-          
-          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
-          mkdir reports
-          horusec start -p="./" -o='sarif' -O='reports/horusec_report.sarif'
-
-          # docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd) -o='sarif' -O=/src/horusec/reports/horusec_report.sarif
-      
-      - name: Archive horusec report
-        uses: actions/upload-artifact@v3
+      - uses: returntocorp/semgrep-action@v1
         with:
-          name: horusec_report
-          path: reports/horusec_report.sarif
-          
-  
-  bandit:
-    runs-on: ubuntu-latest
-    needs: depcheck
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        
-      - name: SAST
+          config: >- # more at semgrep.dev/explore
+            p/security-audit
+            p/secrets
+            p/django
+            p/owasp-top-ten
         continue-on-error: true
-        # uses: fike/horusec-action@v0.2.2
-        # with:
-        #   arguments: "-p ./ -e=false -o=text -O=./test.txt"
-        #run: docker run --rm -v $(pwd):/data cytopia/bandit -r ./app -f txt -o test.txt
-        run: |
-          mkdir reports 
-          pip install bandit
-          bandit -r ./app -f txt -o test.txt
-
-      - run: cat test.txt
-
-      - name: Archive bandit
-        uses: actions/upload-artifact@v3
-        with:
-          name: test.txt
-          path: reports/test.txt
-      
-      - name: Create issue
-        env:
-          URL: "https://api.github.com/repos/michelleamesquita/pipeline-security/issues"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: | 
-          HIGH=`cat test.txt |grep -m 1 "High:" | cut -d ' ' -f 2` && \
-          MEDIUM=`cat test.txt |grep -m 1 "Medium:" | cut -d ' ' -f 2` && \
-          LOW=`cat test.txt |grep -m 1 "Low:" | cut -d ' ' -f 2` && \
-          curl \
-            -X POST \
-            $URL \
-            -H "Content-Type: application/json" \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            --data '{ "title":"Found a vuln","body": "👋 Thanks for reporting! \n HIGH: '"$HIGH"'\n MEDIUM: '"$MEDIUM"' \n LOW: '"$LOW"' " }'
-         
-            
-        
-  zap:
-      runs-on: ubuntu-latest
-      needs: [bandit]
-      steps:     
-      - name: DAST
-        continue-on-error: true
-        uses: zaproxy/action-baseline@v0.9.0
-        with:
-          target: ${{secrets.URL}}
           
-
-  nuclei-scan:
-      runs-on: ubuntu-latest
-      needs: [sonarcloud]
-      steps:
-        - uses: actions/checkout@v2
   
-        - name: Nuclei - Vulnerability Scan
-          uses: projectdiscovery/nuclei-action@main
-          with:
-            target: ${{secrets.URL}}
-            github-report: true
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-  
-        - name: GitHub Workflow artifacts
-          uses: actions/upload-artifact@v2
-          with:
-            name: nuclei.log
-            path: nuclei.log
-  
-        - name: GitHub Security Dashboard Alerts update
-          uses: github/codeql-action/upload-sarif@v2
-          with:
-            sarif_file: nuclei.sarif
