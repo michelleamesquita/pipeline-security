@@ -1,9 +1,9 @@
 name: full-security-scan
 on:
   push:
-    branches: [ master ]
+    branches: [ semgrep-tool ]
   pull_request:
-    branches: [ master ]
+    branches: [ semgrep-tool ]
   issue_comment:
     types: [created]
 
