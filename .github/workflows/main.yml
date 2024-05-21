@@ -100,8 +100,7 @@ jobs:
 
           mkdir reports
 
-          docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec public.ecr.aws/n8z1w5u5/appsec/horusec-sast:latest horusec start -p /src/horusec -P $(pwd) -o='sarif' -O=/src/horusec/reports/horusec_report.sarif
-
+          docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec public.ecr.aws/n8z1w5u5/michelleamesquita/horusec:latest horusec start -p /src/horusec -P $(pwd) -o='sarif' -O=/src/horusec/horusec_report.sarif
           # docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG horusec start -p /src/horusec -P $(pwd) -o='sarif' -O=/src/horusec/reports/horusec_report.sarif
       
       - name: Archive horusec report
